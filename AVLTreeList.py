@@ -20,6 +20,41 @@ class AVLNode(object):
 		self.right = None
 		self.parent = None
 		self.height = -1 # Balance factor
+		self.rank = 0
+		self.size = 1
+
+	def isUnrayParentLeft(self):
+		return (not self.left is None) and self.right is None
+
+	def isUnaryParentRight(self):
+		return (not self.right is None) and self.left is None
+
+	def isLeft():
+		return self.right is None and self.left is None
+	def isRealNode(self):
+		return not self.value is None
+
+	def isLeftSon(self):
+		return  True if self.parent.left is self else False
+
+	def isRightSon(self):
+		return not self.isLeftSon()
+
+	def updateRank(self):
+		newRank = -100
+		parentRank = self.parent.rank
+		if self.isLeftSon():
+			newRank = parentRank -1 -self.right.size
+		elif self.isRightSon():
+			newRank = parentRank +1 +self.left.size
+		self.rank = newRank
+	""""
+		TODO: make sure doesnt cause stack overflow due to improper recursive calls
+	"""
+	def calculateHeight(self):
+		l = 0 if self.left is None else self.lef.getHeight()
+		r = 0 if self.right is None else self.right.getHeight()
+		return = 1 + max(l,r)
 		
 
 	"""returns the left child
@@ -27,7 +62,7 @@ class AVLNode(object):
 	@returns: the left child of self, None if there is no left child
 	"""
 	def getLeft(self):
-		return None
+		return self.left
 
 
 	"""returns the right child
@@ -36,7 +71,7 @@ class AVLNode(object):
 	@returns: the right child of self, None if there is no right child
 	"""
 	def getRight(self):
-		return None
+		return self.right
 
 	"""returns the parent 
 
@@ -44,7 +79,7 @@ class AVLNode(object):
 	@returns: the parent of self, None if there is no parent
 	"""
 	def getParent(self):
-		return None
+		return self.parent
 
 	"""return the value
 
@@ -52,7 +87,7 @@ class AVLNode(object):
 	@returns: the value of self, None if the node is virtual
 	"""
 	def getValue(self):
-		return None
+		return self.value
 
 	"""returns the height
 
@@ -60,7 +95,7 @@ class AVLNode(object):
 	@returns: the height of self, -1 if the node is virtual
 	"""
 	def getHeight(self):
-		return -1
+		return self.height
 
 	"""sets left child
 
@@ -68,7 +103,7 @@ class AVLNode(object):
 	@param node: a node
 	"""
 	def setLeft(self, node):
-		return None
+		self.left = node
 
 	"""sets right child
 
@@ -76,7 +111,7 @@ class AVLNode(object):
 	@param node: a node
 	"""
 	def setRight(self, node):
-		return None
+		self.right = node
 
 	"""sets parent
 
@@ -84,7 +119,7 @@ class AVLNode(object):
 	@param node: a node
 	"""
 	def setParent(self, node):
-		return None
+		self.parent = node
 
 	"""sets value
 
@@ -92,7 +127,7 @@ class AVLNode(object):
 	@param value: data
 	"""
 	def setValue(self, value):
-		return None
+		self.value = value
 
 	"""sets the balance factor of the node
 
@@ -100,7 +135,10 @@ class AVLNode(object):
 	@param h: the height
 	"""
 	def setHeight(self, h):
-		return None
+		self.height = h
+	""""
+		Note to self: when calling this method, pass node.calculateHeight() as the arg.
+	"""
 
 	"""returns whether self is not a virtual node 
 
@@ -108,9 +146,7 @@ class AVLNode(object):
 	@returns: False if self is a virtual node, True otherwise.
 	"""
 	def isRealNode(self):
-		return False
-
-
+		return not self.value is None
 
 """
 A class implementing the ADT list, using an AVL tree.

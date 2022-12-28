@@ -218,6 +218,7 @@ class AVLTreeList(object):
 			TODO: TEST
 	"""
 	def insert(self, i, val):
+		""""Part 1: Create a LEAF node with the paramaters"""
 		newNode = AVLNode(val)
 		
 		leftVirtualKid = AVLNode(None)
@@ -230,8 +231,19 @@ class AVLTreeList(object):
 		
 		newNode.setLeft(leftVirtualKid)
 		newNode.setRight(rightVirtualKid)
+		""""End of part 1"""
+
+		""""Part 2: Find insetion point(parent), and update ranks up to root.
+			Neccesarily goes to the root, so Theta logn.
+			Since rotating keeps the binary search tree rule, rotating WILL NOT change the ranks!
+			So it is okay to do it after updating ranks.
+		"""
 		
 		newParent = self.traverseTo(i)
+
+		""""Part 3: run the algorithm that checks balance factors and rotates and updates as neccesary.
+			worst case: O(logn)
+		"""
 
 	def traverseTo(self,index):
 		traverser = self.root
@@ -258,6 +270,19 @@ class AVLTreeList(object):
 		rightSonOfCriminal.left = criminalNode
 		criminalNode.right = newRightOfCriminal
 
+	def rotateRight(self, criminalNode):
+		leftSonOfCriminal = criminalNode.left
+		newLeftSonOfProblemNode = leftSonOfCriminal.right
+		parent = criminalNode.parent
+		if criminalNode is parent.right:
+			parent.right = leftSonOfCriminal
+		elif criminalNode is parent.left:
+			parent.left = leftSonOfCriminal
+		criminalNode.parent = leftSonOfCriminal
+		leftSonOfCriminal.parent = parent
+		newLeftOfCriminal = leftSonOfCriminal.right
+		leftSonOfCriminal.right = criminalNode
+		criminalNode.left = newLeftOfCriminal
 
 
 

@@ -1,6 +1,6 @@
-#username - complete info
-#id1      - complete info 
-#name1    - complete info 
+#username - amoszohar
+#id1      - 311402812
+#name1    - amos zohar
 #id2      - complete info
 #name2    - complete info  
 
@@ -24,9 +24,11 @@ class AVLNode(object):
 		self.size = 1
 		self.isReal = True
 
+	def getBalanceFactor(self):
+		return self.left.getHeight() - self.right.getHeight()
+
 	def setToVirtual(self):
 		self.isReal = False
-
 
 	def isLeft():
 		return self.right is None and self.left is None
@@ -212,7 +214,16 @@ class AVLTreeList(object):
 	@rtype: list
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
-	
+
+	def travelToLeafFromInernalNode(self,node):
+		p = node.right if node.isRightChild() else node.left
+		i = node.rank
+		while not p is None:
+			if p.rank > i:
+				p=p.getLeft()
+			elif p.rank <i:
+				p=p.getRight()
+		return p.getParent()
 
 	""""
 			TODO: TEST
@@ -220,7 +231,7 @@ class AVLTreeList(object):
 	def insert(self, i, val):
 		""""Part 1: Create a LEAF node with the paramaters"""
 		newNode = AVLNode(val)
-		
+
 		leftVirtualKid = AVLNode(None)
 		leftVirtualKid.setToVirtual()
 		leftVirtualKid.setParent(newNode)
@@ -238,12 +249,36 @@ class AVLTreeList(object):
 			Since rotating keeps the binary search tree rule, rotating WILL NOT change the ranks!
 			So it is okay to do it after updating ranks.
 		"""
-		
-		newParent = self.traverseTo(i)
 
-		""""Part 3: run the algorithm that checks balance factors and rotates and updates as neccesary.
+		if self.empty():
+			self.root = newNode
+			return 0
+
+		notRankedTreeButStillAVLInsertionPoint = self.travelToLeafFromInernalNode(newNode)
+
+		oldListItemI = self.retrieve(i)
+		parent = oldListItemI.getParent()
+		leftson = oldListItemI.getLeft()
+		if oldListItemI.isLeftSon():
+			parent.setLeft(newNode)
+		elif oldListItemI.isRightSon():
+			parent.setRIght(newNode)
+		oldListItemI.getLeft().setToVirtual()
+		oldListItemI.setParent(newNode)
+		newNode.setLeft(leftson)
+		newNode.setRight(oldListItemI)
+		newNode.rank = i
+
+		""""Part 3: run the algorithm that checks balance factors and rotates and updates ranks as neccesary.
 			worst case: O(logn)
 		"""
+		upwardTraverser = notRankedTreeButStillAVLInsertionPoint
+		while upwardTraverser!= None:
+			""""Both rotating and updating rank in one go. Maybe should split? Must consider"""
+			
+			if abs(upwardTraverser.getBalanceFactor())<=1:
+				break;
+			
 
 	def traverseTo(self,index):
 		traverser = self.root
@@ -254,7 +289,7 @@ class AVLTreeList(object):
 				traverser = traverser.getLeft()
 			elif traverser.rank < index:
 				traverser = traverser.getRight()
-		return traverser
+		return traverser.getParent()
 
 	def rotateLeft(self, criminalNode):
 		rightSonOfCriminal = criminalNode.right

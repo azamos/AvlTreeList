@@ -28,6 +28,7 @@ class AVLNode(object):
     def getBalanceFactor(self):
         return self.left.getHeight() - self.right.getHeight() + 1
 
+
     def setToVirtual(self):
         self.isReal = False
 
